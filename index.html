@@ -42,6 +42,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);
 @keyframes particleFly{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-100px) scale(0);opacity:0;}}
 @keyframes logoSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 @keyframes energyFlow{0%{width:0;}100%{width:78%;}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
 /* ══ SPLASH SCREEN ══ */
 #splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#1a0a00 50%,#0a1a0a 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
@@ -101,17 +103,138 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.96);backdro
 .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(245,158,11,0.5);}
 .hamburger{display:none;font-size:1.3rem;background:none;border:none;cursor:pointer;color:var(--sun);padding:0.3rem;}
 
-/* ══ MOBILE MENU ══ */
-.mob-menu{display:none;position:fixed;inset:0;background:white;z-index:9999;flex-direction:column;}
-.mob-menu.open{display:flex;}
-.mob-head{background:linear-gradient(135deg,var(--sun-pale),var(--orange3));padding:1.3rem 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border);}
-.mob-close{font-size:1.3rem;background:none;border:none;cursor:pointer;color:var(--orange);}
-.mob-links-wrap{flex:1;overflow-y:auto;padding:0.5rem 5%;}
-.mob-link{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--sun-light);cursor:pointer;color:var(--text);font-size:1rem;font-weight:500;transition:color 0.2s;}
-.mob-link:hover{color:var(--sun);}
-.mob-link i{color:var(--sun);font-size:0.75rem;}
-.mob-footer{padding:1.2rem 5%;background:var(--sun-pale);border-top:2px solid var(--border);}
-.mob-cta{width:100%;padding:1rem;background:linear-gradient(135deg,var(--sun),var(--orange2));color:white;font-size:1rem;font-weight:700;border:none;border-radius:var(--r4);cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;}
+/* ══ MOBILE NAV RIGHT ICONS ══ */
+.mob-nav-icons{display:none;align-items:center;gap:0.5rem;}
+.mob-cart-btn{position:relative;width:40px;height:40px;background:var(--sun-light);border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--orange);transition:all 0.2s;border:none;}
+.mob-cart-btn:hover{background:var(--sun);color:white;}
+.mob-contact-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--green),var(--green2));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:white;transition:all 0.2s;border:none;box-shadow:0 2px 8px rgba(22,163,74,0.3);}
+.mob-contact-btn:hover{transform:scale(1.1);}
+.mob-hamburger-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--sun),var(--orange2));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:white;transition:all 0.2s;border:none;box-shadow:0 2px 8px rgba(245,158,11,0.4);}
+.mob-hamburger-btn:hover{transform:scale(1.1);}
+
+/* ══ BOTTOM SHEET MOBILE MENU ══ */
+.mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998;display:none;backdrop-filter:blur(4px);}
+.mob-overlay.open{display:block;animation:fadeIn 0.25s ease;}
+.mob-menu{
+  display:none;
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:white;
+  z-index:9999;
+  flex-direction:column;
+  border-radius:24px 24px 0 0;
+  max-height:85vh;
+  transform:translateY(100%);
+  transition:transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 -10px 50px rgba(0,0,0,0.2);
+}
+.mob-menu.open{
+  display:flex;
+  transform:translateY(0);
+}
+.mob-drag-handle{width:44px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
+.mob-head{
+  background:linear-gradient(135deg,var(--sun-pale),var(--orange3));
+  padding:1rem 5% 1rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:2px solid var(--border);
+  flex-shrink:0;
+}
+.mob-close{
+  width:32px;height:32px;
+  background:rgba(234,88,12,0.1);
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  color:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+  transition:all 0.2s;
+}
+.mob-close:hover{background:var(--orange);color:white;}
+.mob-links-wrap{
+  flex:1;
+  overflow-y:auto;
+  padding:0.5rem 5%;
+}
+/* Grid layout for menu items on mobile */
+.mob-links-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0.5rem;
+  padding:0.5rem 0;
+}
+.mob-link{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.9rem 1rem;
+  border-radius:12px;
+  cursor:pointer;
+  color:var(--text);
+  font-size:0.88rem;
+  font-weight:600;
+  transition:all 0.2s;
+  background:var(--off);
+  border:1.5px solid transparent;
+}
+.mob-link:hover,.mob-link:active{
+  background:var(--sun-light);
+  border-color:var(--border);
+  color:var(--orange);
+}
+.mob-link .mob-link-icon{
+  font-size:1.1rem;
+  width:28px;
+  height:28px;
+  background:white;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+.mob-footer{
+  padding:1rem 5% 1.5rem;
+  background:var(--sun-pale);
+  border-top:2px solid var(--border);
+  flex-shrink:0;
+  display:flex;
+  gap:0.7rem;
+}
+.mob-cta{
+  flex:1;
+  padding:0.9rem;
+  background:linear-gradient(135deg,var(--sun),var(--orange2));
+  color:white;
+  font-size:0.92rem;
+  font-weight:700;
+  border:none;
+  border-radius:var(--r4);
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  text-align:center;
+  box-shadow:0 4px 16px rgba(245,158,11,0.4);
+  transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:0.4rem;
+}
+.mob-cta:hover{transform:translateY(-2px);}
+.mob-cta-secondary{
+  flex:1;
+  padding:0.9rem;
+  background:white;
+  color:var(--orange);
+  font-size:0.92rem;
+  font-weight:700;
+  border:2px solid var(--border);
+  border-radius:var(--r4);
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:0.4rem;
+  transition:all 0.2s;
+}
 
 /* ══ REVEAL ══ */
 .rev{opacity:0;transform:translateY(24px);transition:all 0.7s cubic-bezier(0.4,0,0.2,1);}
@@ -126,9 +249,8 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.96);backdro
 .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 40%,#e0f2fe 75%,#dcfce7 100%);}
 .hero-sun-bg{position:absolute;right:-5%;top:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.22) 0%,rgba(245,158,11,0.08) 45%,transparent 70%);animation:sunPulse 4s ease-in-out infinite;}
 .hero-rays-el{position:absolute;right:3%;top:8%;width:400px;height:400px;opacity:0.07;}
-.hero-rays-el::before{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,var(--sun) 8deg,transparent 16deg,var(--sun) 26deg,transparent 34deg,var(--sun) 44deg,transparent 52deg,var(--sun) 62deg,transparent 70deg,var(--sun) 80deg,transparent 88deg,var(--sun) 98deg,transparent 106deg,var(--sun) 116deg,transparent 124deg,var(--sun) 134deg,transparent 142deg,var(--sun) 152deg,transparent 160deg,var(--sun) 170deg,transparent 178deg,var(--sun) 188deg,transparent 196deg,var(--sun) 206deg,transparent 214deg,var(--sun) 224deg,transparent 232deg,var(--sun) 242deg,transparent 250deg,var(--sun) 260deg,transparent 268deg,var(--sun) 278deg,transparent 286deg,var(--sun) 296deg,transparent 304deg,var(--sun) 314deg,transparent 322deg,var(--sun) 332deg,transparent 340deg,var(--sun) 350deg,transparent 358deg,var(--sun) 360deg);animation:sunRays 25s linear infinite;}
+.hero-rays-el::before{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,var(--sun) 8deg,transparent 16deg,var(--sun) 26deg,transparent 34deg,var(--sun) 44deg,transparent 52deg,var(--sun) 62deg,transparent 70deg,var(--sun) 80deg,transparent 88deg,var(--sun) 98deg,transparent 106deg,var(--sun) 116deg,transparent 124deg,var(--sun) 134deg,transparent 142deg,var(--sun) 152deg,transparent 160deg,var(--sun) 170deg,transparent 178deg,var(--sun) 188deg,transparent 196deg,var(--sun) 206deg,transparent 214deg,var(--sun) 224deg,transparent 232deg,var(--sun) 242deg,transparent 250deg,transparent 260deg,var(--sun) 270deg,transparent 278deg,var(--sun) 288deg,transparent 296deg,var(--sun) 306deg,transparent 314deg,var(--sun) 324deg,transparent 332deg,var(--sun) 342deg,transparent 350deg,var(--sun) 360deg);animation:sunRays 25s linear infinite;}
 .hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.055) 1px,transparent 1px);background-size:50px 50px;}
-/* Fixed bottom solar panel bg */
 .hero-fixed-panel{position:fixed;bottom:0;left:0;right:0;height:28vh;z-index:0;pointer-events:none;}
 .hero-fixed-panel img{width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0.14;filter:sepia(0.2);}
 .hero-fixed-panel::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,var(--white) 0%,transparent 25%,transparent 70%,var(--white) 100%);}
@@ -151,7 +273,6 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.96);backdro
 .hstat-num{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--orange);line-height:1;}
 .hstat-num sup{font-size:0.9rem;}
 .hstat-lbl{font-size:0.68rem;color:var(--text2);margin-top:0.3rem;font-weight:500;}
-/* Hero Right */
 .hero-right{position:relative;}
 .hero-img-stack{position:relative;height:500px;}
 .him-main{position:absolute;right:0;top:0;width:78%;height:370px;border-radius:var(--r3);overflow:hidden;box-shadow:0 30px 70px rgba(245,158,11,0.25);border:2px solid rgba(245,158,11,0.2);}
@@ -393,7 +514,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .popup-head p{font-size:0.76rem;color:rgba(255,255,255,0.8);margin-top:0.3rem;}
 .popup-cls{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;}
 .popup-cls:hover{background:rgba(255,255,255,0.35);}
-/* Contact popup cards */
 .ct-cards{padding:1.3rem;display:flex;flex-direction:column;gap:0.65rem;}
 .ct-card{display:flex;align-items:center;gap:1rem;padding:0.9rem 1.1rem;border:2px solid var(--border);border-radius:var(--r2);text-decoration:none;transition:all 0.22s;background:var(--off);}
 .ct-card:hover{border-color:var(--sun2);background:var(--sun-light);transform:translateX(3px);}
@@ -419,7 +539,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .wholesaler-hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;color:white;margin-bottom:0.5rem;position:relative;z-index:1;}
 .wholesaler-hero h1 span{background:linear-gradient(135deg,var(--sun),var(--sun2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .wholesaler-hero p{font-size:0.9rem;color:rgba(255,255,255,0.6);max-width:600px;line-height:1.8;position:relative;z-index:1;}
-/* Wholesaler inquiry form */
 .wh-step{display:none;}
 .wh-step.active{display:block;}
 .wh-progress{display:flex;gap:0;margin-bottom:2.5rem;}
@@ -438,7 +557,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .wh-prev:hover{background:var(--sun-light);color:var(--orange);}
 .wh-next,.wh-submit{background:linear-gradient(135deg,var(--sun),var(--orange2));color:white;box-shadow:0 4px 14px rgba(245,158,11,0.35);}
 .wh-next:hover,.wh-submit:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(245,158,11,0.5);}
-/* Checkbox options */
 .check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.7rem;margin-top:0.5rem;}
 .check-item{display:flex;align-items:center;gap:0.7rem;padding:0.8rem 1rem;border:2px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all 0.2s;}
 .check-item:hover{border-color:var(--sun2);background:var(--sun-light);}
@@ -453,7 +571,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .radio-item .ri-icon{font-size:1.6rem;margin-bottom:0.4rem;display:block;}
 .radio-item .ri-label{font-size:0.78rem;font-weight:700;color:var(--text);}
 .radio-item .ri-sub{font-size:0.68rem;color:var(--text2);margin-top:0.1rem;}
-/* Success card */
 .wh-success{text-align:center;padding:2rem 0;}
 .wh-success-icon{font-size:4rem;margin-bottom:1rem;display:block;animation:float 3s ease-in-out infinite;}
 .wh-success h3{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:0.5rem;}
@@ -517,7 +634,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .cart-total-main{display:flex;justify-content:space-between;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:1rem;padding-top:0.5rem;border-top:1px solid var(--border);}
 .checkout-btn{width:100%;padding:0.92rem;border-radius:var(--r4);background:linear-gradient(135deg,var(--sun),var(--orange2));color:white;border:none;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 16px rgba(245,158,11,0.35);}
 .checkout-btn:hover{transform:translateY(-2px);}
-/* Cart count badge */
 .cart-badge{background:#ef4444;color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;position:absolute;top:-6px;right:-6px;}
 .cart-nav-btn{position:relative;display:flex;align-items:center;gap:0.4rem;background:var(--sun-light);border:2px solid var(--border);border-radius:var(--r4);padding:0.5rem 1rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;color:var(--orange);transition:all 0.2s;}
 .cart-nav-btn:hover{background:var(--sun);color:white;border-color:var(--sun);}
@@ -530,12 +646,10 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .checkout-head h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:white;}
 .checkout-close{background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;}
 .checkout-body{padding:1.5rem 2rem 2rem;}
-/* Order summary */
 .order-summary{background:var(--cream);border-radius:var(--r2);padding:1.2rem;margin-bottom:1.5rem;border:1.5px solid var(--border);}
 .order-sum-title{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:var(--text);margin-bottom:0.8rem;}
 .order-line{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text2);margin-bottom:0.4rem;}
 .order-line.total{font-family:'Syne',sans-serif;font-weight:800;color:var(--text);font-size:0.95rem;border-top:1px solid var(--border);padding-top:0.5rem;margin-top:0.5rem;}
-/* Payment methods */
 .pay-methods{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin:1rem 0 1.5rem;}
 .pay-method{border:2px solid var(--border);border-radius:var(--r2);padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s;}
 .pay-method:hover{border-color:var(--sun2);}
@@ -543,7 +657,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .pay-method-icon{font-size:1.8rem;margin-bottom:0.4rem;display:block;}
 .pay-method-name{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--text);}
 .pay-method-detail{font-size:0.68rem;color:var(--text2);margin-top:0.15rem;}
-/* Account info display */
 .account-info{background:var(--sun-pale);border:2px solid var(--border);border-radius:var(--r2);padding:1.2rem;margin-top:0.8rem;display:none;}
 .account-info.show{display:block;}
 .account-info h4{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:var(--text);margin-bottom:0.6rem;}
@@ -552,7 +665,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .copy-btn{padding:0.2rem 0.7rem;background:linear-gradient(135deg,var(--sun),var(--orange2));color:white;border:none;border-radius:var(--r4);font-size:0.65rem;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:0.3rem;}
 .copy-btn:hover{opacity:0.85;}
 .copy-btn.copied{background:linear-gradient(135deg,var(--green),var(--green2));}
-/* Delivery option */
 .delivery-opts{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin:0.8rem 0;}
 .delivery-opt{border:2px solid var(--border);border-radius:var(--r2);padding:1rem;cursor:pointer;transition:all 0.2s;}
 .delivery-opt:hover{border-color:var(--sun2);}
@@ -560,17 +672,14 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 .delivery-opt h5{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:var(--text);}
 .delivery-opt p{font-size:0.72rem;color:var(--text2);margin-top:0.2rem;}
 .delivery-opt .delivery-price{font-size:0.82rem;font-weight:700;color:var(--orange);margin-top:0.3rem;}
-/* Screenshot upload */
 .screenshot-zone{border:2px dashed var(--border);border-radius:var(--r2);padding:1.5rem;text-align:center;margin-top:0.8rem;cursor:pointer;transition:all 0.2s;}
 .screenshot-zone:hover{border-color:var(--sun);background:var(--sun-pale);}
 .screenshot-zone input{display:none;}
 .screenshot-zone p{font-size:0.8rem;color:var(--text2);}
 .screenshot-zone .sz-icon{font-size:2rem;margin-bottom:0.5rem;display:block;}
 .screenshot-preview{width:100%;max-height:150px;object-fit:contain;border-radius:var(--r);margin-top:0.8rem;border:1px solid var(--border);display:none;}
-/* Place order btn */
 .place-order-btn{width:100%;padding:0.95rem;border-radius:var(--r4);background:linear-gradient(135deg,var(--sun),var(--orange2));color:white;border:none;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-top:1.2rem;transition:all 0.3s;box-shadow:0 4px 16px rgba(245,158,11,0.35);display:flex;align-items:center;justify-content:center;gap:0.5rem;}
 .place-order-btn:hover{transform:translateY(-2px);}
-/* Order success */
 .order-success{text-align:center;padding:2rem;}
 .order-success-icon{font-size:4rem;margin-bottom:1rem;animation:float 3s ease-in-out infinite;}
 .order-success h3{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:0.5rem;}
@@ -588,8 +697,14 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
   .store-grid{grid-template-columns:repeat(3,1fr);}
 }
 @media(max-width:900px){
+  /* Hide desktop nav links and cart button */
   .nl{display:none;}
-  .hamburger{display:block;}
+  .hamburger{display:none;}/* old hamburger hidden */
+  .nav-cta{display:none;}/* hide desktop free quote */
+  /* Hide desktop cart nav btn */
+  .cart-nav-btn{display:none !important;}
+  /* Show mobile icons */
+  .mob-nav-icons{display:flex !important;}
   .stats-strip{grid-template-columns:repeat(2,1fr);}
   .why-grid{grid-template-columns:1fr 1fr;}
   .testi-grid{grid-template-columns:1fr;}
@@ -622,6 +737,11 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
   .cta-btns{flex-direction:column;}
   .topbar{justify-content:center;gap:0.3rem;}
   .tb-text{font-size:0.68rem;}
+  .mob-links-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:380px){
+  .store-grid{grid-template-columns:1fr;}
+  .mob-links-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -712,7 +832,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <button class="checkout-close" onclick="closeCheckout()">✕</button>
     </div>
     <div class="checkout-body" id="checkoutBody">
-      <!-- Order Summary -->
       <div class="order-summary">
         <div class="order-sum-title">📋 Order Summary</div>
         <div id="orderSummaryLines"></div>
@@ -720,12 +839,10 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         <div class="order-line"><span id="co-delivery-label">Delivery</span><span id="co-delivery">Rs. 0</span></div>
         <div class="order-line total"><span>Grand Total</span><span id="co-total">Rs. 0</span></div>
       </div>
-      <!-- Customer Info -->
       <div class="fg-row" style="margin-bottom:0;">
         <div class="fg"><label>Your Name</label><input type="text" id="co-name" placeholder="Full name"></div>
         <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="co-phone" placeholder="03xxxxxxxxx"></div>
       </div>
-      <!-- Delivery Option -->
       <div class="fg"><label>Delivery Option</label>
         <div class="delivery-opts">
           <div class="delivery-opt selected" onclick="selectDelivery(this,'self',0,'Self Pickup')">
@@ -741,7 +858,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         </div>
         <div class="fg" id="addressField" style="display:none;"><label>Delivery Address</label><textarea id="co-address" placeholder="Full address..." style="height:70px;"></textarea></div>
       </div>
-      <!-- Payment Method -->
       <div class="fg"><label>Payment Method</label>
         <div class="pay-methods">
           <div class="pay-method selected" onclick="selectPayment(this,'jazzcash')">
@@ -765,13 +881,11 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
             <div class="pay-method-detail">Pay on receipt</div>
           </div>
         </div>
-        <!-- Account info -->
         <div class="account-info" id="accountInfo">
           <h4 id="accountTitle">Payment Details</h4>
           <div id="accountLines"></div>
         </div>
       </div>
-      <!-- Screenshot upload -->
       <div class="fg" id="screenshotSection" style="display:none;">
         <label>Upload Payment Screenshot</label>
         <div class="screenshot-zone" onclick="document.getElementById('ssInput').click()">
@@ -785,6 +899,34 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         <i class="fas fa-check-circle"></i> Confirm Order via WhatsApp
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ══ MOBILE BOTTOM SHEET MENU ══ -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeMob()"></div>
+<div class="mob-menu" id="mobMenu">
+  <div class="mob-drag-handle"></div>
+  <div class="mob-head">
+    <div class="logo-name" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;">Bin Zareen <span style="color:var(--sun)">Solar</span> ☀️</div>
+    <button class="mob-close" onclick="closeMob()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="mob-links-wrap">
+    <div class="mob-links-grid">
+      <div class="mob-link" onclick="go('home');closeMob()"><span class="mob-link-icon">🏠</span>Home</div>
+      <div class="mob-link" onclick="go('services');closeMob()"><span class="mob-link-icon">⚙️</span>Services</div>
+      <div class="mob-link" onclick="go('products');closeMob()"><span class="mob-link-icon">📦</span>Products</div>
+      <div class="mob-link" onclick="go('store');closeMob()"><span class="mob-link-icon">🛒</span>Store</div>
+      <div class="mob-link" onclick="go('about');closeMob()"><span class="mob-link-icon">🏢</span>About</div>
+      <div class="mob-link" onclick="go('projects');closeMob()"><span class="mob-link-icon">🔧</span>Projects</div>
+      <div class="mob-link" onclick="go('gallery');closeMob()"><span class="mob-link-icon">🖼️</span>Gallery</div>
+      <div class="mob-link" onclick="go('reviews');closeMob()"><span class="mob-link-icon">⭐</span>Reviews</div>
+      <div class="mob-link" onclick="go('wholesaler');closeMob()"><span class="mob-link-icon">🏭</span>Wholesale</div>
+      <div class="mob-link" onclick="go('contact');closeMob()"><span class="mob-link-icon">📍</span>Contact</div>
+    </div>
+  </div>
+  <div class="mob-footer">
+    <button class="mob-cta-secondary" onclick="openCart();closeMob()"><i class="fas fa-shopping-cart"></i> View Cart <span id="mobCartCount" style="background:#ef4444;color:white;border-radius:50%;width:18px;height:18px;font-size:0.65rem;font-weight:800;display:none;align-items:center;justify-content:center;margin-left:2px;">0</span></button>
+    <button class="mob-cta" onclick="go('quote');closeMob()"><i class="fas fa-bolt"></i> Free Quote</button>
   </div>
 </div>
 
@@ -810,6 +952,7 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         <div class="logo-sub">Pvt. Ltd. — Islamabad</div>
       </div>
     </div>
+    <!-- Desktop Nav Links -->
     <div class="nav-links">
       <button class="nl active" data-pg="home" onclick="go('home')">Home</button>
       <button class="nl" data-pg="services" onclick="go('services')">Services</button>
@@ -822,46 +965,36 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <button class="nl" data-pg="wholesaler" onclick="go('wholesaler')">Wholesale</button>
       <button class="nl" data-pg="contact" onclick="go('contact')">Contact</button>
     </div>
+    <!-- Desktop right side -->
     <div style="display:flex;gap:0.6rem;align-items:center;">
       <button class="cart-nav-btn" onclick="openCart()" style="position:relative;">
         <i class="fas fa-shopping-cart"></i>
         <span id="cartNavCount" class="cart-badge" style="display:none;">0</span>
       </button>
       <button class="nav-cta" onclick="go('quote')">⚡ Free Quote</button>
-      <button class="hamburger" onclick="openMob()"><i class="fas fa-bars"></i></button>
+    </div>
+    <!-- Mobile right icons: Cart + Contact + Hamburger -->
+    <div class="mob-nav-icons" style="display:none;">
+      <!-- Cart button -->
+      <button class="mob-cart-btn" onclick="openCart()" style="position:relative;">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cartNavCountMob" class="cart-badge" style="display:none;">0</span>
+      </button>
+      <!-- Contact / WhatsApp button -->
+      <button class="mob-contact-btn" onclick="openCt()">
+        <i class="fab fa-whatsapp"></i>
+      </button>
+      <!-- Hamburger menu button -->
+      <button class="mob-hamburger-btn" onclick="openMob()">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </div>
 </nav>
 
-<!-- ══ MOBILE MENU ══ -->
-<div class="mob-menu" id="mobMenu">
-  <div class="mob-head">
-    <div class="logo-name" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;">Bin Zareen <span style="color:var(--sun)">Solar</span></div>
-    <button class="mob-close" onclick="closeMob()"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="mob-links-wrap">
-    <div class="mob-link" onclick="go('home');closeMob()">Home <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('services');closeMob()">Services <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('products');closeMob()">Products <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('store');closeMob()">🛒 Online Store <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('about');closeMob()">About Us <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('projects');closeMob()">Projects <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('gallery');closeMob()">Gallery <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('reviews');closeMob()">Reviews <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('wholesaler');closeMob()">Wholesale Inquiry <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="go('contact');closeMob()">Contact <i class="fas fa-chevron-right"></i></div>
-    <div class="mob-link" onclick="openCart();closeMob()">🛒 View Cart <i class="fas fa-chevron-right"></i></div>
-  </div>
-  <div class="mob-footer">
-    <button class="mob-cta" onclick="go('quote');closeMob()">⚡ Get Free Quote</button>
-  </div>
-</div>
-
 <!-- ══════ HOME ══════ -->
 <div class="pg on" id="pg-home">
-  <!-- Fixed BG panels -->
   <div class="hero-fixed-panel"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1400&auto=format&fit=crop&q=50" alt="Solar Panels"></div>
-  <!-- HERO -->
   <div class="hero">
     <div class="hero-bg"></div>
     <div class="hero-sun-bg"></div>
@@ -887,7 +1020,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         <div class="hero-img-stack">
           <div class="him-main">
             <img src="https://images.unsplash.com/photo-1559302504-64aae6ca6b6d?w=800&auto=format&fit=crop&q=80" alt="Installation">
-            <div class="him-main::after"></div>
             <div class="him-main-cap"><h3>Premium Solar Solutions</h3><p>For Homes & Businesses across Pakistan</p></div>
           </div>
           <div class="him-sec"><img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&auto=format&fit=crop&q=80" alt="Solar Farm"></div>
@@ -902,7 +1034,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       </div>
     </div>
   </div>
-  <!-- TICKER -->
   <div class="ticker">
     <div class="ticker-track">
       <span class="ticker-item">☀️ FREE Site Survey</span>
@@ -923,14 +1054,12 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <span class="ticker-item">🛒 Shop Online — Fast Delivery</span>
     </div>
   </div>
-  <!-- STATS STRIP -->
   <div class="stats-strip">
     <div class="ss-item rev"><span class="ss-icon">🏠</span><div class="ss-num"><span id="s1">0</span>+</div><div class="ss-lbl">Homes Powered</div></div>
     <div class="ss-item rev" style="transition-delay:0.1s;"><span class="ss-icon">⚡</span><div class="ss-num"><span id="s2">0</span>MW</div><div class="ss-lbl">Total Capacity</div></div>
     <div class="ss-item rev" style="transition-delay:0.2s;"><span class="ss-icon">🌱</span><div class="ss-num"><span id="s3">0</span>T</div><div class="ss-lbl">CO₂ Reduced</div></div>
     <div class="ss-item rev" style="transition-delay:0.3s;"><span class="ss-icon">⭐</span><div class="ss-num"><span id="s4">0</span>%</div><div class="ss-lbl">Satisfaction Rate</div></div>
   </div>
-  <!-- SERVICES PREVIEW -->
   <section class="sec-alt">
     <div class="sec-hdr c rev">
       <div class="stag sun"><i class="fas fa-solar-panel"></i> What We Do</div>
@@ -947,7 +1076,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
     </div>
     <div style="text-align:center;margin-top:2rem;"><button class="btn sun" onclick="go('services')">View All Services <i class="fas fa-arrow-right"></i></button></div>
   </section>
-  <!-- VIDEO SECTION -->
   <section class="video-section">
     <div class="sec-hdr c rev">
       <div class="stag sky"><i class="fas fa-play-circle"></i> See It In Action</div>
@@ -978,7 +1106,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       </div>
     </div>
   </section>
-  <!-- PARTNERS -->
   <section class="partners-section">
     <div class="sec-hdr c rev">
       <div class="stag sun"><i class="fas fa-globe"></i> Brand Partners</div>
@@ -1009,7 +1136,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       </div>
     </div>
   </section>
-  <!-- TEAM -->
   <section class="sec-alt">
     <div class="sec-hdr rev">
       <div class="stag sun"><i class="fas fa-users"></i> Our Team</div>
@@ -1022,7 +1148,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <div class="owner-card rev" style="transition-delay:0.3s;"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=80" alt="Operations"><div class="owner-stripe"></div><div class="owner-overlay"></div><div class="owner-info"><div class="owner-name">Bilal Zareen</div><div class="owner-role">🌱 Director Operations</div><div class="owner-quote">"Our after-sales support is what sets us apart. Your satisfaction doesn't end at installation — it begins there."</div></div><div class="owner-corner">📊</div></div>
     </div>
   </section>
-  <!-- WHY US -->
   <section class="sec-sky">
     <div class="sec-hdr c rev">
       <div class="stag sun"><i class="fas fa-award"></i> Why Choose Us</div>
@@ -1037,7 +1162,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <div class="why-card rev" style="transition-delay:0.5s;"><span class="why-icon">📞</span><div class="why-title">24/7 Support</div><div class="why-desc">Round-the-clock customer support and emergency maintenance for all clients.</div></div>
     </div>
   </section>
-  <!-- PROCESS -->
   <section class="sec-alt">
     <div class="sec-hdr c rev">
       <div class="stag green"><i class="fas fa-tasks"></i> How It Works</div>
@@ -1054,7 +1178,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       </div>
     </div>
   </section>
-  <!-- TESTIMONIALS -->
   <section>
     <div class="sec-hdr c rev">
       <div class="stag sun"><i class="fas fa-star"></i> Client Stories</div>
@@ -1067,7 +1190,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
     </div>
     <div style="text-align:center;margin-top:1.8rem;"><button class="btn outline" onclick="go('reviews')">Read All Reviews <i class="fas fa-arrow-right"></i></button></div>
   </section>
-  <!-- CTA BANNER -->
   <div class="cta-banner">
     <h2>Ready to Go Solar? ☀️</h2>
     <p>Free consultation, no obligation — just massive savings on your electricity bills!</p>
@@ -1077,7 +1199,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
       <button class="cta-btn outline-w" onclick="openCt()"><i class="fas fa-phone-alt"></i> Contact Now</button>
     </div>
   </div>
-  <!-- FOOTER -->
   <footer>
     <div class="foot-grid">
       <div>
@@ -1111,10 +1232,10 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
   <div class="pg-hero"><button class="back-btn" onclick="goBack()"><i class="fas fa-chevron-left"></i> Back</button><div class="stag sun"><i class="fas fa-boxes"></i> Products</div><h1 class="sh" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Premium Solar <span class="sun-g">Products</span></h1><p class="sp">All types of solar inverters, panels, accessories — global brands, local service.</p></div>
   <section>
     <div class="prod-grid">
-      <div class="prod-card rev"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&auto=format&fit=crop&q=80" alt="Panels"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Panels</div><div class="prod-sub">Mono & Poly — 400W to 700W</div></div><div class="prod-badge">Premium</div></div>
-      <div class="prod-card rev" style="transition-delay:0.1s;"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80" alt="Inverters"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Inverters</div><div class="prod-sub">Solis, Growatt, Huawei & More</div></div><div class="prod-badge">All Brands</div></div>
-      <div class="prod-card rev" style="transition-delay:0.2s;"><img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop&q=80" alt="Batteries"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Battery Storage</div><div class="prod-sub">Lithium LiFePO4 & AGM</div></div><div class="prod-badge">New Stock</div></div>
-      <div class="prod-card rev" style="transition-delay:0.3s;"><img src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=600&auto=format&fit=crop&q=80" alt="Accessories"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Accessories</div><div class="prod-sub">Cables, MC4, Mounting, Fuses</div></div><div class="prod-badge">Full Range</div></div>
+      <div class="prod-card rev"><img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&auto=format&fit=crop&q=60" alt="Panels"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Panels</div><div class="prod-sub">Mono & Poly — 400W to 700W</div></div><div class="prod-badge">Premium</div></div>
+      <div class="prod-card rev" style="transition-delay:0.1s;"><img src="https://media.istockphoto.com/id/2204272606/photo/electrician-installing-solar-panel-system-wiring-inverter-and-electric-box.webp?a=1&b=1&s=612x612&w=0&k=20&c=4ixaw7QyA2Nu5M54vyJOkCg2tyXDZub2b9uzHTLovpU=" alt="Inverters"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Inverters</div><div class="prod-sub">Solis, Growatt, Huawei & More</div></div><div class="prod-badge">All Brands</div></div>
+      <div class="prod-card rev" style="transition-delay:0.2s;"><img src="https://media.istockphoto.com/id/2181114821/photo/3d-illustration-of-lithium-ion-battery-packs-on-a-production-line-in-a-manufacturing-facility.webp?a=1&b=1&s=612x612&w=0&k=20&c=NgxVasEacd0Z3KAooa_chNyNNUhFG4VMHwPM-OQaxIg=" alt="Batteries"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Battery Storage</div><div class="prod-sub">Lithium LiFePO4 & AGM</div></div><div class="prod-badge">New Stock</div></div>
+      <div class="prod-card rev" style="transition-delay:0.3s;"><img src="https://images.unsplash.com/photo-1560700105-ef025fd710af?w=600&auto=format&fit=crop&q=60" alt="Accessories"><div class="prod-ov"></div><div class="prod-info"><div class="prod-name">Solar Accessories</div><div class="prod-sub">Cables, MC4, Mounting, Fuses</div></div><div class="prod-badge">Full Range</div></div>
     </div>
     <div style="margin-top:3rem;"><div class="sec-hdr c"><div class="stag sun"><i class="fas fa-globe"></i> Brands We Carry</div></div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.9rem;"><div class="partner-logo rev" style="min-width:auto;"><span>⚡ <span class="mark">Huawei</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>☀️ <span class="mark">Solis</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>🌱 <span class="mark">Growatt</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>🔋 <span class="mark">Fronius</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>⚡ <span class="mark">SMA</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>☀️ <span class="mark">LONGi</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>🏭 <span class="mark">JA Solar</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>🔆 <span class="mark">Trina</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>⚡ <span class="mark">Canadian</span></span></div><div class="partner-logo rev" style="min-width:auto;"><span>🌍 <span class="mark">REC Group</span></span></div></div></div>
     <div style="text-align:center;margin-top:2.5rem;"><button class="btn sun" onclick="openCt()">📞 Inquire About Products</button><button class="btn outline" style="margin-left:1rem;" onclick="go('store')">🛒 Shop Online</button></div>
@@ -1138,10 +1259,9 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 
 <!-- ══════ WHOLESALER ══════ -->
 <div class="pg" id="pg-wholesaler">
-  <div class="wholesaler-hero"><button class="back-btn" onclick="goBack()" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2);"><i class="fas fa-chevron-left"></i> Back</button><div class="stag sun"><i class="fas fa-industry"></i> Wholesale</div><h1 class="sh" style="font-size:clamp(1.9rem,3.5vw,2.8rem);color:white;">Wholesale <span style="background:linear-gradient(135deg,var(--sun),var(--sun2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Inquiry</span></h1><p class="sp" style="color:rgba(255,255,255,0.6);">Are you a dealer, installer, or bulk buyer? Get exclusive wholesale pricing from Bin Zareen Solar. Fill in the form below to get started.</p></div>
+  <div class="wholesaler-hero"><button class="back-btn" onclick="goBack()" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.2);"><i class="fas fa-chevron-left"></i> Back</button><div class="stag sun"><i class="fas fa-industry"></i> Wholesale</div><h1 class="sh" style="font-size:clamp(1.9rem,3.5vw,2.8rem);color:white;">Wholesale <span style="background:linear-gradient(135deg,var(--sun),var(--sun2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Inquiry</span></h1><p class="sp" style="color:rgba(255,255,255,0.6);">Are you a dealer, installer, or bulk buyer? Get exclusive wholesale pricing from Bin Zareen Solar.</p></div>
   <section>
     <div style="max-width:750px;margin:0 auto;">
-      <!-- Progress -->
       <div class="wh-progress" id="whProgress">
         <div class="wh-prog-item active" id="wp1"><span>1</span>Business Info</div>
         <div class="wh-prog-item" id="wp2"><span>2</span>Requirements</div>
@@ -1149,7 +1269,6 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
         <div class="wh-prog-item" id="wp4"><span>4</span>Submit</div>
       </div>
       <div class="wh-card">
-        <!-- STEP 1: Business Info -->
         <div class="wh-step active" id="ws1">
           <div class="wh-title">🏢 Tell Us About Your Business</div>
           <div class="wh-sub">We'll tailor the best wholesale deal for your business type.</div>
@@ -1171,10 +1290,9 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
           </div>
           <div class="wh-nav"><div></div><button class="wh-next" onclick="whNext(1)">Next <i class="fas fa-chevron-right"></i></button></div>
         </div>
-        <!-- STEP 2: Requirements -->
         <div class="wh-step" id="ws2">
           <div class="wh-title">⚡ What Products Do You Need?</div>
-          <div class="wh-sub">Select all that apply — we'll provide pricing for each category.</div>
+          <div class="wh-sub">Select all that apply.</div>
           <div class="fg"><label>Product Categories</label>
             <div class="check-grid">
               <div class="check-item selected" onclick="toggleCheck(this)"><span class="check-icon">⚡</span><span class="check-label">Solar Inverters (All Brands)</span></div>
@@ -1188,10 +1306,9 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
           <div class="fg"><label>Preferred Brands (Optional)</label><input type="text" id="wh-brands" placeholder="e.g. Huawei, Growatt, Solis..."></div>
           <div class="wh-nav"><button class="wh-prev" onclick="whPrev(2)"><i class="fas fa-chevron-left"></i> Back</button><button class="wh-next" onclick="whNext(2)">Next <i class="fas fa-chevron-right"></i></button></div>
         </div>
-        <!-- STEP 3: Volume -->
         <div class="wh-step" id="ws3">
           <div class="wh-title">📦 Volume & Business Terms</div>
-          <div class="wh-sub">Help us understand your purchasing scale to offer the best pricing.</div>
+          <div class="wh-sub">Help us understand your purchasing scale.</div>
           <div class="fg"><label>Monthly Purchase Volume</label>
             <div class="radio-grid" style="grid-template-columns:1fr 1fr;">
               <div class="radio-item selected" onclick="selectRadio(this,'wh-vol','small')"><span class="ri-icon">📦</span><div class="ri-label">Rs. 1–10 Lakh</div><div class="ri-sub">Monthly</div></div>
@@ -1202,13 +1319,12 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
             <input type="hidden" id="wh-vol" value="small">
           </div>
           <div class="fg"><label>Payment Terms Preference</label><select id="wh-terms"><option value="advance">Full Advance Payment</option><option value="50-50">50% Advance, 50% on Delivery</option><option value="credit">30-Day Credit</option><option value="discuss">Open to Discussion</option></select></div>
-          <div class="fg"><label>Additional Notes</label><textarea id="wh-notes" placeholder="Any specific requirements, project details, or questions..."></textarea></div>
+          <div class="fg"><label>Additional Notes</label><textarea id="wh-notes" placeholder="Any specific requirements..."></textarea></div>
           <div class="wh-nav"><button class="wh-prev" onclick="whPrev(3)"><i class="fas fa-chevron-left"></i> Back</button><button class="wh-next" onclick="whNext(3)">Next <i class="fas fa-chevron-right"></i></button></div>
         </div>
-        <!-- STEP 4: Submit -->
         <div class="wh-step" id="ws4">
           <div class="wh-title">🚀 Ready to Submit?</div>
-          <div class="wh-sub">Review your information and submit via WhatsApp. Our wholesale team will contact you within 2 hours.</div>
+          <div class="wh-sub">Review your information and submit via WhatsApp.</div>
           <div id="wh-preview" style="background:var(--cream);border:2px solid var(--border);border-radius:var(--r2);padding:1.3rem;margin-bottom:1.2rem;font-size:0.82rem;color:var(--text2);line-height:2;"></div>
           <div style="background:var(--sun-light);border:1.5px solid var(--border);border-radius:var(--r2);padding:1rem;font-size:0.8rem;color:var(--orange);margin-bottom:1rem;">
             <strong>✅ What happens next:</strong><br>
@@ -1219,12 +1335,11 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
           </div>
           <div class="wh-nav"><button class="wh-prev" onclick="whPrev(4)"><i class="fas fa-chevron-left"></i> Back</button><button class="wh-submit" onclick="submitWholesale()"><i class="fab fa-whatsapp"></i> Submit via WhatsApp</button></div>
         </div>
-        <!-- SUCCESS -->
         <div class="wh-step" id="ws5">
           <div class="wh-success">
             <span class="wh-success-icon">🎉</span>
             <h3>Inquiry Submitted!</h3>
-            <p>Our wholesale team has received your inquiry and will contact you within 2 hours with exclusive pricing. Thank you for choosing Bin Zareen Solar!</p>
+            <p>Our wholesale team will contact you within 2 hours. Thank you for choosing Bin Zareen Solar!</p>
             <button class="btn sun" style="margin-top:1.2rem;" onclick="go('home')">Back to Home</button>
           </div>
         </div>
@@ -1236,7 +1351,7 @@ footer{background:var(--sun-pale);border-top:2px solid var(--border);padding:4re
 <!-- ══════ ABOUT ══════ -->
 <div class="pg" id="pg-about">
   <div class="pg-hero"><button class="back-btn" onclick="goBack()"><i class="fas fa-chevron-left"></i> Back</button><div class="stag sun"><i class="fas fa-building"></i> About Us</div><h1 class="sh" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">About <span class="sun-g">Bin Zareen Solar</span></h1><p class="sp">A trusted name in Pakistan's renewable energy revolution.</p></div>
-  <section><div style="display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center;"><div class="rev-l"><img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=900&auto=format&fit=crop&q=80" alt="About" style="width:100%;height:460px;object-fit:cover;border-radius:var(--r3);box-shadow:var(--sh3);"></div><div class="rev-r"><div class="stag sun"><i class="fas fa-star"></i> Our Story</div><h2 class="sh">Powering Pakistan's <span class="sun-g">Clean Energy</span> Future</h2><p class="sp" style="margin-bottom:1.3rem;">Founded with a single mission: make clean, affordable solar energy accessible to every Pakistani household and business. Based in Islamabad, we serve clients nationwide.</p><p class="sp">We deal in all types of solar inverters and accessories, providing complete turnkey projects from consultation to handover. Our certified engineers ensure every installation meets international standards.</p><div style="margin-top:1.8rem;display:flex;flex-direction:column;gap:0.75rem;"><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>AEDB & NEPRA Certified Company</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>All Types of Solar Inverters & Accessories</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>Complete Projects — Residential to Industrial</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>Islamabad HQ with Nationwide Coverage</div></div><button class="btn sun" style="margin-top:1.8rem;" onclick="go('quote')">⚡ Get Free Quote</button></div></div></section>
+  <section><div style="display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center;"><div class="rev-l"><img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=900&auto=format&fit=crop&q=80" alt="About" style="width:100%;height:460px;object-fit:cover;border-radius:var(--r3);box-shadow:var(--sh3);"></div><div class="rev-r"><div class="stag sun"><i class="fas fa-star"></i> Our Story</div><h2 class="sh">Powering Pakistan's <span class="sun-g">Clean Energy</span> Future</h2><p class="sp" style="margin-bottom:1.3rem;">Founded with a single mission: make clean, affordable solar energy accessible to every Pakistani household and business. Based in Islamabad, we serve clients nationwide.</p><p class="sp">We deal in all types of solar inverters and accessories, providing complete turnkey projects from consultation to handover.</p><div style="margin-top:1.8rem;display:flex;flex-direction:column;gap:0.75rem;"><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>AEDB & NEPRA Certified Company</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>All Types of Solar Inverters & Accessories</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>Complete Projects — Residential to Industrial</div><div style="display:flex;align-items:center;gap:0.9rem;font-size:0.86rem;color:var(--text2);"><div style="width:20px;height:20px;background:linear-gradient(135deg,var(--sun),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.65rem;flex-shrink:0;"><i class="fas fa-check"></i></div>Islamabad HQ with Nationwide Coverage</div></div><button class="btn sun" style="margin-top:1.8rem;" onclick="go('quote')">⚡ Get Free Quote</button></div></div></section>
 </div>
 
 <!-- ══════ PROJECTS ══════ -->
@@ -1330,16 +1445,13 @@ const storeProducts = [
   {id:2,cat:'inverter',brand:'Growatt',name:'Growatt MIN 3600TL-X',cap:'3.6kW On-Grid Inverter',price:58000,oldPrice:null,badge:'new',img:'https://media.istockphoto.com/id/2198010578/photo/electrical-room.webp?a=1&b=1&s=612x612&w=0&k=20&c=-c4TDaXs67T9VWdzK6qntMSWFSCB4aAof48ZCqRnXIw='},
   {id:3,cat:'inverter',brand:'Solis',name:'Solis 5G 6kW Hybrid',cap:'6kW Hybrid + EPS',price:128000,oldPrice:140000,badge:'sale',img:'https://media.istockphoto.com/id/2198010578/photo/electrical-room.webp?a=1&b=1&s=612x612&w=0&k=20&c=-c4TDaXs67T9VWdzK6qntMSWFSCB4aAof48ZCqRnXIw='},
   {id:4,cat:'inverter',brand:'Fronius',name:'Fronius Primo 8.2',cap:'8.2kW String Inverter',price:185000,oldPrice:null,badge:'new',img:'https://media.istockphoto.com/id/2204272606/photo/electrician-installing-solar-panel-system-wiring-inverter-and-electric-box.webp?a=1&b=1&s=612x612&w=0&k=20&c=4ixaw7QyA2Nu5M54vyJOkCg2tyXDZub2b9uzHTLovpU='},
-  
   {id:5,cat:'panel',brand:'LONGi',name:'LONGi Hi-MO 550W',cap:'550W Mono PERC Panel',price:22000,oldPrice:26000,badge:'hot',img:'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&auto=format&fit=crop&q=60'},
   {id:6,cat:'panel',brand:'JA Solar',name:'JA Solar 460W Poly',cap:'460W Polycrystalline',price:16500,oldPrice:null,badge:'new',img:'https://plus.unsplash.com/premium_photo-1678864963908-5fa7d014159b?w=600&auto=format&fit=crop&q=60'},
   {id:7,cat:'panel',brand:'Trina',name:'Trina Vertex 670W',cap:'670W TOPCon Bifacial',price:28500,oldPrice:32000,badge:'sale',img:'https://images.unsplash.com/photo-1630608354129-6a7704150401?w=600&auto=format&fit=crop&q=60'},
   {id:8,cat:'panel',brand:'Canadian',name:'Canadian Solar 545W',cap:'545W HiKu5 Mono',price:21000,oldPrice:null,badge:null,img:'https://media.istockphoto.com/id/1239411562/photo/solar-panels-at-kilanguni-national-park.webp?a=1&b=1&s=612x612&w=0&k=20&c=cziFDzcpjQFtV4MOJcT6mhJR0G_-N5agJvjv94Nu3i8='},
-  
   {id:9,cat:'battery',brand:'Pylontech',name:'Pylontech US3000C',cap:'3.55kWh LiFePO4',price:165000,oldPrice:185000,badge:'hot',img:'https://media.istockphoto.com/id/2181114821/photo/3d-illustration-of-lithium-ion-battery-packs-on-a-production-line-in-a-manufacturing-facility.webp?a=1&b=1&s=612x612&w=0&k=20&c=NgxVasEacd0Z3KAooa_chNyNNUhFG4VMHwPM-OQaxIg='},
   {id:10,cat:'battery',brand:'BYD',name:'BYD Battery Box 5.1',cap:'5.12kWh High Voltage',price:220000,oldPrice:null,badge:'new',img:'https://media.istockphoto.com/id/518063816/photo/electricity-storage-compartment.webp?a=1&b=1&s=612x612&w=0&k=20&c=tXapzPaukTobvsFr55rC5D3mJeSyAuR34wiwjIApIac='},
   {id:11,cat:'battery',brand:'Generic',name:'AGM Deep Cycle 200Ah',cap:'12V Deep Cycle Battery',price:32000,oldPrice:null,badge:null,img:'https://media.istockphoto.com/id/2181114821/photo/3d-illustration-of-lithium-ion-battery-packs-on-a-production-line-in-a-manufacturing-facility.webp?a=1&b=1&s=612x612&w=0&k=20&c=NgxVasEacd0Z3KAooa_chNyNNUhFG4VMHwPM-OQaxIg='},
-  
   {id:12,cat:'accessory',brand:'Generic',name:'MC4 Solar Connector Set',cap:'IP67 Rated, 1000V',price:850,oldPrice:null,badge:null,img:'https://images.unsplash.com/photo-1560700105-ef025fd710af?w=600&auto=format&fit=crop&q=60'},
   {id:13,cat:'accessory',brand:'Generic',name:'DC Solar Cable (4mm)',cap:'Per Meter — UV Resistant',price:180,oldPrice:null,badge:null,img:'https://images.unsplash.com/photo-1595437193398-f24279553f4f?w=600&auto=format&fit=crop&q=60'},
   {id:14,cat:'accessory',brand:'Generic',name:'Aluminum Rail Mounting Kit',cap:'For 4 Panels — Roof Mount',price:8500,oldPrice:10000,badge:'sale',img:'https://media.istockphoto.com/id/2212331081/photo/workers-are-installing-awning-solar-panels.webp?a=1&b=1&s=612x612&w=0&k=20&c=EMvsRWjouEXw-1Vb2pIvXXnoJLOR-ivuepDwAjZu8Jw='},
@@ -1415,10 +1527,18 @@ window.addEventListener('popstate',e=>{
 });
 
 // ═══════════════════════════════════════════
-// MOBILE MENU
+// MOBILE MENU — Bottom Sheet
 // ═══════════════════════════════════════════
-function openMob(){document.getElementById('mobMenu').classList.add('open');document.body.style.overflow='hidden';}
-function closeMob(){document.getElementById('mobMenu').classList.remove('open');document.body.style.overflow='';}
+function openMob(){
+  document.getElementById('mobOverlay').classList.add('open');
+  document.getElementById('mobMenu').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMob(){
+  document.getElementById('mobOverlay').classList.remove('open');
+  document.getElementById('mobMenu').classList.remove('open');
+  document.body.style.overflow='';
+}
 
 // ═══════════════════════════════════════════
 // CONTACT POPUP
@@ -1519,7 +1639,6 @@ function renderStore(filter='all'){
       </div>
     </div>`;
   }).join('');
-  // Re-observe
   setTimeout(()=>grid.querySelectorAll('.store-card').forEach(el=>obs.observe(el)),80);
 }
 
@@ -1533,7 +1652,6 @@ function changeQty(id,delta){
   productQty[id]=Math.max(1,productQty[id]+delta);
   const el=document.getElementById('qty-'+id);
   if(el)el.textContent=productQty[id];
-  // Update cart if item is in cart
   const ci=cart.find(c=>c.id===id);
   if(ci){ci.qty=productQty[id];renderCart();}
 }
@@ -1545,7 +1663,6 @@ function addToCart(id){
   else{cart.push({...prod,qty:productQty[id]});}
   renderCart();
   updateCartBadge();
-  // Update button
   const btn=document.getElementById('atc-'+id);
   if(btn){btn.innerHTML='<i class="fas fa-check"></i> Added';btn.classList.add('added');}
   openCart();
@@ -1601,8 +1718,15 @@ function removeFromCart(id){
 
 function updateCartBadge(){
   const total=cart.reduce((s,i)=>s+i.qty,0);
+  // Desktop badge
   const badge=document.getElementById('cartNavCount');
   if(badge){badge.textContent=total;badge.style.display=total?'flex':'none';}
+  // Mobile badge
+  const mobBadge=document.getElementById('cartNavCountMob');
+  if(mobBadge){mobBadge.textContent=total;mobBadge.style.display=total?'flex':'none';}
+  // Menu cart count
+  const mobMenuCount=document.getElementById('mobCartCount');
+  if(mobMenuCount){mobMenuCount.textContent=total;mobMenuCount.style.display=total?'flex':'none';}
 }
 
 function openCart(){document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartSidebar').classList.add('open');renderCart();}
@@ -1614,14 +1738,12 @@ function closeCart(){document.getElementById('cartOverlay').classList.remove('op
 function openCheckout(){
   closeCart();
   if(!cart.length){alert('Cart is empty!');return;}
-  // Build order summary
   let lines='',subtotal=0;
   cart.forEach(item=>{const t=item.price*item.qty;subtotal+=t;lines+=`<div class="order-line"><span>${item.name} ×${item.qty}</span><span>Rs. ${t.toLocaleString()}</span></div>`;});
   document.getElementById('orderSummaryLines').innerHTML=lines;
   document.getElementById('co-subtotal').textContent='Rs. '+subtotal.toLocaleString();
   updateCoDelivery();
   document.getElementById('checkoutModal').classList.add('open');
-  // Default payment
   selectPayment(document.querySelector('.pay-method'),selectedPayment);
 }
 function closeCheckout(){
@@ -1633,7 +1755,6 @@ function updateCoDelivery(){
   document.getElementById('co-delivery-label').textContent=deliveryType==='delivery'?'Home Delivery':'Self Pickup';
   document.getElementById('co-delivery').textContent=deliveryCost?'Rs. '+deliveryCost.toLocaleString():'FREE';
   document.getElementById('co-total').textContent='Rs. '+(subtotal+deliveryCost).toLocaleString();
-  // Update cart footer too
   document.getElementById('cartDelivery').textContent=deliveryCost?'Rs. '+deliveryCost.toLocaleString():'FREE';
   document.getElementById('cartTotal').textContent='Rs. '+(subtotal+deliveryCost).toLocaleString();
 }
@@ -1683,7 +1804,6 @@ function placeOrder(){
   let items=cart.map(i=>`• ${i.name} ×${i.qty} = Rs. ${(i.price*i.qty).toLocaleString()}`).join('\n');
   const msg=`*🛒 NEW ORDER — Bin Zareen Solar Store* ☀️%0A%0ACustomer: ${name}%0APhone: ${phone}%0A%0A*Order Items:*%0A${encodeURIComponent(items)}%0A%0ASubtotal: Rs. ${subtotal.toLocaleString()}%0ADelivery: Rs. ${deliveryCost.toLocaleString()||'FREE'}%0A*Total: Rs. ${total.toLocaleString()}*%0A%0ADelivery: ${deliveryType==='delivery'?address:'Self Pickup'}%0APayment: ${paymentAccounts[selectedPayment].name}`;
   window.open(`https://wa.me/923188791637?text=${msg}`,'_blank');
-  // Show success
   document.getElementById('checkoutBody').innerHTML=`<div class="order-success"><div class="order-success-icon">🎉</div><h3>Order Placed!</h3><p>Your order has been sent via WhatsApp. Our team will confirm within 1 hour. Thank you!</p><button class="btn sun" style="margin-top:1.2rem;" onclick="closeCheckout();go('home')">Back to Home</button></div>`;
   cart=[];renderCart();updateCartBadge();
   renderStore(currentFilter);
